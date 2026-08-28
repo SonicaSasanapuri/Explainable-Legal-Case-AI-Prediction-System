@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Outcome Predictor Documentation</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --paper: #ffffff;
+      --ink: #15171d;
+      --muted: #6e7481;
+      --soft: #e8e0d4;
+      --line: #d8cdbd;
+      --gold: #b8872e;
+      --green: #157347;
+      --red: #b42318;
+      --blue: #245c8f;
+      --violet: #6b4fa3;
+      --code: #111827;
+      --radius: 8px;
+      --shadow: 0 18px 45px rgba(21, 23, 29, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(184, 135, 46, 0.06) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(184, 135, 46, 0.05) 1px, transparent 1px),
+        var(--bg);
+      background-size: 42px 42px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 20px;
+      background: rgba(255, 255, 255, 0.82);
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 10px 24px rgba(21, 23, 29, 0.18);
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 22px 8px 8px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      color: #353b46;
+      font-size: 14px;
+    }
+
+    .nav-link:hover {
+      background: #f1ebe2;
+      color: var(--ink);
+    }
+
+    .nav-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      align-items: center;
+      padding: 56px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.85), rgba(246, 243, 238, 0.86)),
+        radial-gradient(circle at 70% 20%, rgba(21, 23, 29, 0.08), transparent 32%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 42px;
+      align-items: center;
+      max-width: 1180px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(21, 115, 71, 0.12);
+    }
+
+    h2 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 0.98;
+      letter-spacing: 0;
+      max-width: 820px;
+    }
+
+    .hero-copy {
+      color: var(--muted);
+      max-width: 650px;
+      margin-top: 22px;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .hero-panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .panel-top span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.68);
+      font-weight: 700;
+    }
+
+    .pipeline {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .pipe-row {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #ece5da;
+      border-radius: var(--radius);
+      background: #fbfaf8;
+    }
+
+    .pipe-num {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #efe5d5;
+      color: #6c4b16;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .pipe-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .pipe-row small {
+      color: var(--muted);
+    }
+
+    .chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef4f8;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    section {
+      padding: 48px 56px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-inner {
+      max-width: 1180px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h3 {
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 500px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(21, 23, 29, 0.04);
+    }
+
+    .card h4 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .card ul {
+      padding-left: 18px;
+      margin-top: 10px;
+    }
+
+    .metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .metric strong {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr 70px 1fr 70px 1fr;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .arch-block {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 180px;
+    }
+
+    .arch-block h4 {
+      margin-bottom: 10px;
+    }
+
+    .arch-block p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid #e6ddcf;
+      background: #fbfaf8;
+      color: #3f4652;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .endpoint {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .method {
+      display: inline-flex;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .get {
+      background: var(--blue);
+    }
+
+    .post {
+      background: var(--green);
+    }
+
+    code {
+      font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    pre {
+      position: relative;
+      overflow-x: auto;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: var(--code);
+      color: #f8fafc;
+      border: 1px solid #252c3a;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-top: 12px;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .timeline-item::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .timeline-item strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .notice {
+      border-left: 5px solid var(--gold);
+      background: #fffaf0;
+      border-radius: var(--radius);
+      padding: 16px;
+      color: #5d4419;
+    }
+
+    .showcase {
+      display: grid;
+      gap: 18px;
+    }
+
+    .screenshot-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .screenshot-media {
+      background: #eee9e0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .screenshot-media img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .screenshot-body {
+      padding: 18px;
+    }
+
+    .screenshot-body h4 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .screenshot-body p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer {
+      padding: 28px 56px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .nav-title {
+        grid-column: 1 / -1;
+      }
+
+      .hero,
+      section,
+      .footer {
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+
+      .hero-grid,
+      .grid.cols-2,
+      .grid.cols-3,
+      .command-grid,
+      .architecture {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+        min-height: 34px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .sidebar nav {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 34px;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 10px;
+      }
+
+      .endpoint {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">LP</div>
+        <div>
+          <h1>Case Outcome Predictor</h1>
+          <p>Project documentation website</p>
+        </div>
+      </div>
+
+      <nav aria-label="Documentation sections">
+        <div class="nav-title">Guide</div>
+        <a class="nav-link" href="#overview"><span class="nav-dot"></span>Overview</a>
+        <a class="nav-link" href="#architecture"><span class="nav-dot"></span>Architecture</a>
+        <a class="nav-link" href="#api"><span class="nav-dot"></span>API</a>
+        <a class="nav-link" href="#setup"><span class="nav-dot"></span>Setup</a>
+        <a class="nav-link" href="#training"><span class="nav-dot"></span>Training</a>
+        <a class="nav-link" href="#frontend"><span class="nav-dot"></span>Frontend</a>
+        <a class="nav-link" href="#screenshots"><span class="nav-dot"></span>Screenshots</a>
+        <a class="nav-link" href="#files"><span class="nav-dot"></span>Files</a>
+        <a class="nav-link" href="#limits"><span class="nav-dot"></span>Notes</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="hero" id="overview">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow"><span class="pulse"></span>FastAPI + React + Explainable ML</div>
+            <h2>Case Outcome Predictor documentation</h2>
+            <p class="hero-copy">
+              A website-style guide for the explainable Indian Supreme Court case outcome prediction project,
+              including backend APIs, model pipeline, training flow, frontend behavior, and deployment notes.
+            </p>
+            <div class="hero-actions">
+              <a class="button" href="#setup">Start setup</a>
+              <a class="button secondary" href="#api">View API routes</a>
+            </div>
+          </div>
+
+          <div class="hero-panel" aria-label="Six layer pipeline preview">
+            <div class="panel-top">
+              <strong>Six-layer prediction pipeline</strong>
+              <span>v3.0</span>
+            </div>
+            <div class="pipeline">
+              <div class="pipe-row"><span class="pipe-num">1</span><div><strong>ML Prediction</strong><small>TF-IDF features and XGBoost probabilities</small></div><span class="chip">XGBoost</span></div>
+              <div class="pipe-row"><span class="pipe-num">2</span><div><strong>Semantic Retrieval</strong><small>Top similar cases from FAISS</small></div><span class="chip">FAISS</span></div>
+              <div class="pipe-row"><span class="pipe-num">3</span><div><strong>Explainability</strong><small>Keyword-level SHAP contributions</small></div><span class="chip">SHAP</span></div>
+              <div class="pipe-row"><span class="pipe-num">4</span><div><strong>Legal Rules</strong><small>Domain rules adjust probability</small></div><span class="chip">Rules</span></div>
+              <div class="pipe-row"><span class="pipe-num">5</span><div><strong>Consistency Check</strong><small>Compares prediction to similar cases</small></div><span class="chip">Review</span></div>
+              <div class="pipe-row"><span class="pipe-num">6</span><div><strong>Uncertainty</strong><small>Flags low-confidence outcomes</small></div><span class="chip">Guardrail</span></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section>
+        <div class="section-inner">
+          <div class="grid cols-3">
+            <div class="card">
+              <div class="metric"><strong>6</strong><span>layers</span></div>
+              <p>Prediction, retrieval, SHAP, legal rules, consistency checking, and uncertainty detection.</p>
+            </div>
+            <div class="card">
+              <div class="metric"><strong>4</strong><span>artifacts</span></div>
+              <p>Model, vectorizer, FAISS index, and case store are loaded from the `models/` folder.</p>
+            </div>
+            <div class="card">
+              <div class="metric"><strong>3</strong><span>main APIs</span></div>
+              <p>Text prediction, PDF prediction, and legal argument simulation endpoints.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Architecture</h3>
+            <p>The app is split into a FastAPI backend, React frontend, and model training pipeline. Runtime prediction depends on saved model artifacts.</p>
+          </div>
+
+          <div class="architecture">
+            <div class="arch-block">
+              <h4>React Frontend</h4>
+              <p>Accepts case text, validates minimum length, sends requests to the backend, and renders verdict cards, SHAP keywords, and similar cases.</p>
+              <div class="stack">
+                <span class="tag">React 18</span>
+                <span class="tag">Axios</span>
+                <span class="tag">CRA</span>
+              </div>
+            </div>
+            <div class="arrow">-&gt;</div>
+            <div class="arch-block">
+              <h4>FastAPI Backend</h4>
+              <p>Coordinates prediction, retrieval, explanation, legal rule adjustment, consistency review, uncertainty handling, and argument simulation.</p>
+              <div class="stack">
+                <span class="tag">FastAPI</span>
+                <span class="tag">Pydantic</span>
+                <span class="tag">Uvicorn</span>
+              </div>
+            </div>
+            <div class="arrow">-&gt;</div>
+            <div class="arch-block">
+              <h4>ML and Search</h4>
+              <p>Uses TF-IDF + XGBoost for classification, InLegalBERT embeddings for semantic retrieval, FAISS for search, and SHAP for explanation.</p>
+              <div class="stack">
+                <span class="tag">XGBoost</span>
+                <span class="tag">InLegalBERT</span>
+                <span class="tag">FAISS</span>
+                <span class="tag">SHAP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="api">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>API Reference</h3>
+            <p>The backend runs by default on `http://localhost:8000`. FastAPI docs are available at `/docs` when the server is running.</p>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="card endpoint">
+              <span class="method get">GET</span>
+              <div>
+                <h4>/health</h4>
+                <p>Checks whether the API is running and returns the backend version.</p>
+                <pre><code>{
+  "status": "ok",
+  "version": "3.0"
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card endpoint">
+              <span class="method post">POST</span>
+              <div>
+                <h4>/predict</h4>
+                <p>Predicts a case outcome from raw text. Requires at least 50 characters.</p>
+                <pre><code>{
+  "case_text": "Full case facts, arguments, or judgment text..."
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card endpoint">
+              <span class="method post">POST</span>
+              <div>
+                <h4>/predict-pdf</h4>
+                <p>Accepts a text-based PDF upload using multipart form field `file` and returns the same prediction response shape.</p>
+                <pre><code>curl -X POST http://localhost:8000/predict-pdf \
+  -F "file=@case.pdf"</code></pre>
+              </div>
+            </div>
+
+            <div class="card endpoint">
+              <span class="method post">POST</span>
+              <div>
+                <h4>/simulate</h4>
+                <p>Analyzes legal arguments against the current verdict and estimates confidence or verdict shifts.</p>
+                <pre><code>{
+  "argument": "The arrest was illegal under Section 50 CrPC.",
+  "current_verdict": "REJECTED",
+  "current_confidence": 0.68,
+  "similar_cases": [],
+  "round_number": 1
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="setup">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Setup</h3>
+            <p>Start the backend from the project root so the relative `models/` paths resolve correctly. Start the frontend from `frontend/`.</p>
+          </div>
+
+          <div class="command-grid">
+            <div class="card">
+              <h4>Backend</h4>
+              <pre><code>python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn backend.main:app --reload --port 8000</code></pre>
+            </div>
+
+            <div class="card">
+              <h4>Frontend</h4>
+              <pre><code>cd frontend
+npm install
+npm start</code></pre>
+            </div>
+
+            <div class="card">
+              <h4>Optional PDF Support</h4>
+              <pre><code>pip install pypdf</code></pre>
+              <p>The PDF endpoint imports `pypdf` dynamically when a PDF is uploaded.</p>
+            </div>
+
+            <div class="card">
+              <h4>Useful URLs</h4>
+              <pre><code>Frontend: http://localhost:3000
+Backend:  http://localhost:8000
+API docs: http://localhost:8000/docs</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="training">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Training Pipeline</h3>
+            <p>`preprocess_and_train.py` cleans the dataset, trains the classifier, builds the FAISS index, and saves all runtime artifacts.</p>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item"><div><strong>Load dataset</strong><p>Reads `data/final_dataset.csv` with `text` and `label` columns.</p></div></div>
+            <div class="timeline-item"><div><strong>Preprocess legal text</strong><p>Extracts relevant legal sections, removes URL and citation artifacts, normalizes whitespace, and filters short samples.</p></div></div>
+            <div class="timeline-item"><div><strong>Train classifier</strong><p>Fits TF-IDF ngram features and trains an XGBoost binary classifier with class balancing.</p></div></div>
+            <div class="timeline-item"><div><strong>Evaluate threshold</strong><p>Compares default prediction with calibrated accept threshold `0.38`.</p></div></div>
+            <div class="timeline-item"><div><strong>Build semantic index</strong><p>Encodes cases with `law-ai/InLegalBERT`, normalizes embeddings, and stores them in FAISS.</p></div></div>
+            <div class="timeline-item"><div><strong>Save artifacts</strong><p>Writes `tfidf_vectorizer.pkl`, `xgboost_model.pkl`, `faiss_index.bin`, and `case_store.pkl` to `models/`.</p></div></div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <h4>Run training</h4>
+            <pre><code>python preprocess_and_train.py</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="frontend">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Frontend Behavior</h3>
+            <p>The React app is focused on text-based prediction and result visualization.</p>
+          </div>
+
+          <div class="grid cols-3">
+            <div class="card">
+              <h4>Input</h4>
+              <p>Users paste case facts, arguments, judgment text, or petition details. The UI requires at least 50 characters.</p>
+            </div>
+            <div class="card">
+              <h4>Prediction</h4>
+              <p>`App.jsx` posts to `http://localhost:8000/predict` and stores the returned result in React state.</p>
+            </div>
+            <div class="card">
+              <h4>Output</h4>
+              <p>Verdict, confidence, generated explanation, SHAP keywords, and similar past cases are displayed in separate panels.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screenshots">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Application Screenshots</h3>
+            <p>These screens show the prediction result, explainability panels, similar-case retrieval, and legal argument simulator in the working app.</p>
+          </div>
+
+          <div class="showcase">
+            <article class="screenshot-card">
+              <div class="screenshot-media">
+                <img src="docs-assets/prediction-result.png" alt="Rejected verdict result with low confidence warning and AI explanation" />
+              </div>
+              <div class="screenshot-body">
+                <h4>Prediction Result</h4>
+                <p>The result view presents the final verdict, confidence score, consistency status, uncertainty warning, and natural-language explanation.</p>
+              </div>
+            </article>
+
+            <article class="screenshot-card">
+              <div class="screenshot-media">
+                <img src="docs-assets/keywords-similar-cases.png" alt="Key legal factors panel and similar past cases panel" />
+              </div>
+              <div class="screenshot-body">
+                <h4>Explainability and Retrieval</h4>
+                <p>The SHAP panel highlights words that influenced the prediction, while the FAISS panel lists semantically similar accepted and rejected cases.</p>
+              </div>
+            </article>
+
+            <article class="screenshot-card">
+              <div class="screenshot-media">
+                <img src="docs-assets/argument-simulator.png" alt="Legal argument simulator with confidence tracker and argument input" />
+              </div>
+              <div class="screenshot-body">
+                <h4>Legal Argument Simulator</h4>
+                <p>The simulator lets users challenge the prediction with legal arguments and observe how confidence or verdict direction may shift.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="files">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Important Files</h3>
+            <p>A quick map of the codebase pieces you will edit most often.</p>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="card">
+              <h4>Backend</h4>
+              <ul>
+                <li>`backend/main.py`: FastAPI routes and prediction pipeline.</li>
+                <li>`backend/predictor.py`: TF-IDF and XGBoost wrapper.</li>
+                <li>`backend/retriever.py`: FAISS and InLegalBERT retrieval.</li>
+                <li>`backend/explainer.py`: SHAP keyword extraction.</li>
+                <li>`backend/legal_rules.py`: legal rule adjustments.</li>
+                <li>`backend/simulator.py`: argument simulator.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Frontend and Training</h4>
+              <ul>
+                <li>`frontend/src/App.jsx`: main React workflow.</li>
+                <li>`frontend/src/components/`: UI components.</li>
+                <li>`preprocess_and_train.py`: training and FAISS build script.</li>
+                <li>`merge_datasets.py`: creates `data/final_dataset.csv`.</li>
+                <li>`models/`: runtime model artifacts.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="limits">
+        <div class="section-inner">
+          <div class="section-head">
+            <h3>Operational Notes</h3>
+            <p>Things to know before presenting, testing, or deploying the project.</p>
+          </div>
+
+          <div class="grid cols-2">
+            <div class="notice">
+              <strong>Legal safety</strong>
+              <p>The system is decision-support software. It should not be treated as a substitute for professional legal advice.</p>
+            </div>
+            <div class="notice">
+              <strong>Startup time</strong>
+              <p>The backend may take time to start because it loads the XGBoost model, FAISS index, case store, SHAP explainer, and InLegalBERT model.</p>
+            </div>
+            <div class="notice">
+              <strong>Production hardening</strong>
+              <p>Restrict CORS, move hard-coded URLs to environment variables, remove secrets, add tests, and pin dependency versions.</p>
+            </div>
+            <div class="notice">
+              <strong>Known limitations</strong>
+              <p>PDF support requires text-based PDFs, the rule engine is keyword-based, and retrieval uses only the first 1,500 query characters.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        Case Outcome Predictor documentation website. Open this file directly in a browser, or serve it as a static HTML page.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

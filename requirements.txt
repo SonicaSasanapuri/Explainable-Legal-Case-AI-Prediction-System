@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+xgboost
+sentence-transformers
+faiss-cpu
+shap
+pydantic
+python-multipart
+pypdf
